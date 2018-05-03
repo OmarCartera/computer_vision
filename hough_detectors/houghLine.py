@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from skimage import filter
+from skimage import feature
 import matplotlib.colors as color
 import time
 
@@ -70,7 +70,7 @@ def plotLines(image, detectedRadius, detectedThetas, Ny, Nx):
     plt.ylim(Ny, 0)
 
 
-    plt.savefig('houghLine.png')
+    plt.savefig('output_houghLine.png')
 
    
 
@@ -80,7 +80,7 @@ if __name__ == '__main__':
     start_time = time.time()
 
     # Load the image
-    image = plt.imread('images/Lines.jpg')
+    image = plt.imread('Lines.jpg')
 
     Ny, Nx, _ = image.shape
 
@@ -89,7 +89,7 @@ if __name__ == '__main__':
     valImage = hsvImage[...,2]
     
     # Detect edges using canny 
-    edgeImage = filter.canny(valImage, sigma = 1.4, low_threshold = 40, high_threshold = 150)
+    edgeImage = feature.canny(valImage, sigma = 1.4, low_threshold = 40, high_threshold = 150)
 
     # Show original image
     plt.figure('Original Image')
@@ -112,7 +112,7 @@ if __name__ == '__main__':
     plt.set_cmap('gray')
     
     # Detect and superimpose lines on original image
-    detectLines(image, accumulator, 0.6, rhos, thetas, Ny, Nx)
+    detectLines(image, accumulator, 0.3, rhos, thetas, Ny, Nx)
     
     print("--- %0.3f seconds ---" % (time.time() - start_time))
     ####################

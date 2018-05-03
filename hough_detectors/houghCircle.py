@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.colors as color
-from skimage import filter
+from skimage import feature
 import time
 
 
@@ -63,7 +63,7 @@ def plotCircles(image, ys, xs, rs, Nx, Ny):
     plt.xlim(0, Nx)
     plt.ylim(Ny, 0)
 
-    plt.savefig('houghCircle.png')
+    plt.savefig('output_houghCircle.png')
 
 
     
@@ -72,7 +72,7 @@ if __name__ == '__main__':
     start_time = time.time()
 
     # Load the image
-    image = plt.imread('images/coins.jpg')
+    image = plt.imread('coins.jpg')
 
     try:
         # Get value Channel (intensity)
@@ -83,7 +83,7 @@ if __name__ == '__main__':
         valImage = image
 
     # Edge detection (canny)
-    edgeImage = filter.canny(valImage,sigma=1.4, low_threshold=40, high_threshold=150)    
+    edgeImage = feature.canny(valImage,sigma=1.4, low_threshold=40, high_threshold=150)    
     
     # Show original image
     plt.figure('Original Image')
