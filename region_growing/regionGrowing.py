@@ -14,7 +14,7 @@ def grow_region():
 
 	while len(points) > 0:
 		check_neighbours(points.pop())
-
+		
 	show_final()
 
 
@@ -53,7 +53,7 @@ def check_neighbours(point):
 def show_final():
 	global start
 	elapsed_time = "%0.5f Seconds" % (time.time() - start)
-	plt.title('Final Image')
+	plt.title('Final Image ... 2D')
 	plt.text(5, -12, elapsed_time, fontsize=10, bbox=dict(facecolor='yellow', alpha=1))
 
 	plt.imshow(grayImage)
@@ -82,7 +82,7 @@ value = 0
 points    = []
 threshold = 10
 
-file = 'seg1'
+file = 'seg3'
 
 try:
 	image = plt.imread(file + '.png')
@@ -102,7 +102,6 @@ except ValueError:
 
 
 grayImage = np.round(rgb2gray(image))
-
 
 fig = plt.figure()
 
