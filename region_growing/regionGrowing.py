@@ -9,91 +9,80 @@ import matplotlib.colors as color
 import time 
 
 
-
 def rgb2gray(rgb):
 	return np.dot(rgb[...,:3], [0.299, 0.587, 0.114])
 
 
 
-def growRegion(y, x):
+def growRegion():
 	global points
-
-	value = int(grayImage[y][x])
-
-	k = 0
-	prev = 0
 
 	while len(points) > 0:
-		if prev == len(points):
-			k += 1
+		checkNeighbours(points.pop(0))
 
-		prev = len(points)
-		for i in range(len(points)):
-			try:
-				checkNeighbours(points[i][0], points[i][1], value)
-
-				grayImage[(points[i][0], points[i][1])] = 0
-				points.remove(points[i])
-
-			except IndexError:
-				pass
-
-		if k == 2:
-			points = []
-			break
-
-
-	final(grayImage)
-
-
-def checkNeighbours(y, x, value):
-	global points
-
-	if (np.abs((grayImage[y-1][x] - value)) < threshold) and (grayImage[y-1][x]):
-		grayImage[y-1][x] = 0
-		points.append((y-1, x))		
+	show_final()
 
 
 
-	if (np.abs((grayImage[y][x-1] - value)) < threshold) and (grayImage[y][x-1]):
-		grayImage[y][x-1] = 0
-		points.append((y, x-1))
+def checkNeighbours(point):
+	global points, value
+
+	y = point[0]
+	x = point[1]
+
+	try:
+		if (np.abs((grayImage[y-1][x] - value)) < threshold) and (grayImage[y-1][x]):
+			grayImage[y-1][x] = 0
+			points.append((y-1, x))		
 
 
-	if (np.abs((grayImage[y][x+1] - value)) < threshold) and (grayImage[y][x+1]):
-		grayImage[y][x+1] = 0
-		points.append((y, x+1))
+		if (np.abs((grayImage[y][x-1] - value)) < threshold) and (grayImage[y][x-1]):
+			grayImage[y][x-1] = 0
+			points.append((y, x-1))
 
 
-	if (np.abs((grayImage[y+1][x] - value)) < threshold) and (grayImage[y+1][x]):
-		grayImage[y+1][x] = 0
-		points.append((y+1, x))
+		if (np.abs((grayImage[y][x+1] - value)) < threshold) and (grayImage[y][x+1]):
+			grayImage[y][x+1] = 0
+			points.append((y, x+1))
+
+
+		if (np.abs((grayImage[y+1][x] - value)) < threshold) and (grayImage[y+1][x]):
+			grayImage[y+1][x] = 0
+			points.append((y+1, x))
+
+	except:
+		pass
 
 
 
-
-def final(gray):
+def show_final():
 	global start
-	print("\n~~~ %0.2f Seconds ~~~ " % (time.time() - start))
+	print("\n~~~ %0.5f Seconds ~~~ " % (time.time() - start))
 	plt.title('Final Image')
-	plt.imshow(gray)
+	plt.imshow(grayImage)
 	plt.savefig('output_regionGrowing.png')
 	plt.show()
 
 
+
 def onclick(event):
-	global start
+	global start, value
+
 	start = time.time()
 
 	x, y = int(event.xdata), int(event.ydata)
 
+	value = int(grayImage[y][x])
+
 	points.append((y, x))
 
-	growRegion(y, x)
+	growRegion()
 
 
 
 start = 0
+
+value = 0
 
 points    = []
 threshold = 10
