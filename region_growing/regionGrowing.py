@@ -1,8 +1,3 @@
-#Implement region growing segmentation. 
-#Allow user to set an initial seed and then segment
-#this region according to similarity of colors and or intensity.
-
-
 import numpy as np 
 import matplotlib.pyplot as plt 
 import matplotlib.colors as color
@@ -14,17 +9,17 @@ def rgb2gray(rgb):
 
 
 
-def growRegion():
+def grow_region():
 	global points
 
 	while len(points) > 0:
-		checkNeighbours(points.pop(0))
+		check_neighbours(points.pop())
 
 	show_final()
 
 
 
-def checkNeighbours(point):
+def check_neighbours(point):
 	global points, value
 
 	y = point[0]
@@ -57,8 +52,10 @@ def checkNeighbours(point):
 
 def show_final():
 	global start
-	print("\n~~~ %0.5f Seconds ~~~ " % (time.time() - start))
+	elapsed_time = "%0.5f Seconds" % (time.time() - start)
 	plt.title('Final Image')
+	plt.text(5, -12, elapsed_time, fontsize=10, bbox=dict(facecolor='yellow', alpha=1))
+
 	plt.imshow(grayImage)
 	plt.savefig('output_regionGrowing.png')
 	plt.show()
@@ -70,13 +67,11 @@ def onclick(event):
 
 	start = time.time()
 
-	x, y = int(event.xdata), int(event.ydata)
+	points.append((int(event.ydata), int(event.xdata)))
 
-	value = int(grayImage[y][x])
+	value = grayImage[points[0]]
 
-	points.append((y, x))
-
-	growRegion()
+	grow_region()
 
 
 
@@ -88,8 +83,6 @@ points    = []
 threshold = 10
 
 file = 'seg1'
-
-fig = plt.figure()
 
 try:
 	image = plt.imread(file + '.png')
@@ -111,6 +104,7 @@ except ValueError:
 grayImage = np.round(rgb2gray(image))
 
 
+fig = plt.figure()
 
 fig.add_subplot(111)
 plt.title('Input Image')
