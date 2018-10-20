@@ -83,7 +83,7 @@ value = 0
 points    = []
 threshold = 10
 
-file = 'seg3'
+file = 'conan1'
 
 try:
 	image = plt.imread(file + '.png')
@@ -97,14 +97,6 @@ except IOError:
 
 
 Ny, Nx, _ = image.shape
-
-try:
-	hsvImage = color.rgb_to_hsv(image)
-	valImage = hsvImage[...,2]
-
-except ValueError:
-	valImage = image
-
 
 grayImage = np.round(rgb2gray(image))
 
