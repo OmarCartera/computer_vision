@@ -14,7 +14,7 @@ def grow_region():
 
 	while len(points) > 0:
 		check_neighbours(points.pop())
-		
+	
 	show_final()
 
 
@@ -49,7 +49,8 @@ def check_neighbours(point):
 			image[y, x+1][3] = 0
 			points.append((y, x+1))
 
-	except:
+	except IndexError as e:
+		# print e
 		pass
 
 
@@ -58,7 +59,7 @@ def show_final():
 	global start, image, background
 
 	elapsed_time = "%0.5f Seconds" % (time.time() - start)
-	plt.title('Final Image ... Magic Tool')
+	plt.title('          Magic Tool')
 	plt.text(5, -12, elapsed_time, fontsize=10, bbox=dict(facecolor='yellow', alpha=1))
 
 	plt.imshow(background)
@@ -69,19 +70,40 @@ def show_final():
 
 
 def onclick(event):
-	global start, value
+	global start, value, image, grayImage
 
 	start = time.time()
 
-	points.append((int(event.ydata), int(event.xdata)))
+	if(event.button == 1):
+		image_stack.append(image.copy())
+		gray_stack.append(grayImage.copy())
 
-	print image[int(event.ydata), int(event.xdata)]
+		points.append((int(event.ydata), int(event.xdata)))
 
-	value = grayImage[points[0]]
+		# print image[int(event.ydata), int(event.xdata)]
 
-	grow_region()
+		value = grayImage[points[0]]
+
+		grow_region()
+
+	elif(event.button == 3):
+		try:
+			image = image_stack.pop().copy()
+			grayImage = gray_stack.pop().copy()
+
+			show_final()
+
+		except IndexError:
+			print 'empty stacks :)'
 
 
+
+# def onkey(event):
+# 	print('you pressed', event.key, event.xdata, event.ydata)
+
+
+image_stack = []
+gray_stack = []
 
 start = 0
 
@@ -94,21 +116,14 @@ file = 'conan1'
 
 try:
 	image = plt.imread(file + '.png')
-	background = plt.imread('base.png')
 
-except IOError:
+except IOError as e:
+	# print e
 	image = plt.imread(file + '.jpg')
 
+background = plt.imread('base.png')
 
 Ny, Nx, _ = image.shape
-
-try:
-	hsvImage = color.rgb_to_hsv(image)
-	valImage = hsvImage[...,2]
-
-except ValueError:
-	valImage = image
-
 
 grayImage = np.round(rgb2gray(image))
 
@@ -117,8 +132,11 @@ fig = plt.figure()
 fig.add_subplot(111)
 plt.title('Input Image')
 
+plt.imshow(background)
 plt.imshow(image)
 plt.set_cmap('gray')
-cid = fig.canvas.mpl_connect('button_press_event', onclick)
+
+cid1 = fig.canvas.mpl_connect('button_press_event', onclick)
+# cid2 = fig.canvas.mpl_connect('key_press_event', onkey)
 
 plt.show()
